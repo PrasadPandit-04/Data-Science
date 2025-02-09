@@ -3,16 +3,10 @@
 
 # # COVID-19 Project - Predict Death - Using scikit-learn Pipeline
 
-# In[ ]:
-
-
-
-
-
 # ## 1. Importing libraries
 # 
 
-# In[555]:
+# In[1]:
 
 
 import pandas as pd
@@ -40,44 +34,44 @@ import joblib, dill
 
 # ## 2. Data loading and first impressions
 
-# In[502]:
+# In[2]:
 
 
-df = pd.read_csv(r"G:\Data Science Eduminds\Projects\Covid\Covid Data.csv")
+df = pd.read_csv('/kaggle/input/covid19-dataset/Covid Data.csv')
 df.head(3)
 
 
-# In[503]:
+# In[3]:
 
 
 df.tail(3)
 
 
-# In[504]:
+# In[4]:
 
 
 df.info()
 
 
-# In[505]:
+# In[5]:
 
 
 df.describe()
 
 
-# In[506]:
+# In[6]:
 
 
 df.isnull().sum().sum()
 
 
-# In[507]:
+# In[7]:
 
 
 df.corr(numeric_only=True)
 
 
-# In[508]:
+# In[8]:
 
 
 df.duplicated().sum() # We'll remove the duplicates in pipeline. (Best-Practice for frequently updated datasets)
@@ -102,7 +96,7 @@ df.duplicated().sum() # We'll remove the duplicates in pipeline. (Best-Practice 
 8.  For most of the features 98 is actual also missing value.
 
 '''
-# In[510]:
+# In[9]:
 
 
 # As per dataset, 97, 98, 99 are missing values.
@@ -114,7 +108,7 @@ print(pd.DataFrame([missing_data]).T)
 #  As we can see only 3 features returned high missing (97, 99) values. We'll handle this in pipeline.
 #  If SEX = 2 (MALE) then PREGNANT = 0 (Male - 0, yes - 1, no - 2)
 #  If ['PATIENT_TYPE'] == 1 then ['INTUBED'] = ['ICU'] = 0
-# In[511]:
+# In[10]:
 
 
 # Now lets see for actual missing data:  (We'll handle this in pipeline using imputer)
@@ -124,7 +118,7 @@ for i in df:
 print(pd.DataFrame([missing_data]).T)
 
 
-# In[512]:
+# In[11]:
 
 
 # Values 1-3 mean that the patient was diagnosed with covid in different degrees. 
@@ -133,7 +127,7 @@ print(pd.DataFrame([missing_data]).T)
 df['CLASIFFICATION_FINAL'].value_counts() 
 
 
-# In[513]:
+# In[12]:
 
 
 # As per dataset, if DATE_DIED = 9999-99-99 then patient is alive else dead.
@@ -141,13 +135,13 @@ df['CLASIFFICATION_FINAL'].value_counts()
 df['DATE_DIED'].value_counts()
 
 
-# In[514]:
+# In[13]:
 
 
 df['AGE'].min(), df['AGE'].max()  # Age is between 0 and 121. We'll scale this in pipeline.
 
 
-# In[515]:
+# In[14]:
 
 
 df['MEDICAL_UNIT'].value_counts() 
@@ -155,7 +149,7 @@ df['MEDICAL_UNIT'].value_counts()
 # We'll encode this using one-hot encoder in pipeline.
 
 
-# In[516]:
+# In[15]:
 
 
 # Finally, we'll check if there's any 97, 98, 99 value present in dataset (except AGE feature).
@@ -163,7 +157,7 @@ df['MEDICAL_UNIT'].value_counts()
 # Then we'll use iterative imputer to fill missing values appropreatly.
 
 
-# In[517]:
+# In[16]:
 
 
 df.hist(figsize=(20,20),bins=13);  # Provides insight to unique values and rough count per feature.
@@ -171,7 +165,7 @@ df.hist(figsize=(20,20),bins=13);  # Provides insight to unique values and rough
 
 # ## 4. Custom Transformers
 
-# In[519]:
+# In[17]:
 
 
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -430,7 +424,7 @@ class IterativeImputer_cat_own(BaseEstimator, TransformerMixin):
 
 # ## 5. Data Preprocessing Pipeline
 
-# In[521]:
+# In[18]:
 
 
 # Define cat_features and num_features before the train_test_split ***
@@ -454,13 +448,13 @@ preprocessor = ColumnTransformer(transformers=[
 ])
 
 
-# In[522]:
+# In[19]:
 
 
 len(num_features) + len(cat_features), len(df.columns)
 
 
-# In[523]:
+# In[20]:
 
 
 from sklearn.pipeline import Pipeline
@@ -505,7 +499,7 @@ class CustomPipeline(Pipeline):
 
 # ## 6. Create final Pipelines:
 
-# In[525]:
+# In[21]:
 
 
 # Final Pipeline including all the transformers
@@ -523,7 +517,7 @@ def create_pipeline():
 
 # ## 7. Feature Separation and Train Test Split:
 
-# In[625]:
+# In[22]:
 
 
 # Now, separate the dependent and independent variables:
@@ -536,7 +530,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # ## 8. Apply Pipelines to Training data:
 
-# In[605]:
+# In[23]:
 
 
 # Apply pre-processing_pipeline to X_train and y_train
@@ -548,7 +542,7 @@ duplicates_remover = pipeline.named_steps['duplicates_remover']
 y_train_transformed = y_train.loc[duplicates_remover.unique_indices].apply(lambda x: 0 if x == '9999-99-99' else 1).reset_index(drop=True)
 
 
-# In[607]:
+# In[24]:
 
 
 # Confirm that X_train and y_train has same sample size after transformation.
@@ -557,7 +551,7 @@ X_train_transformed.shape, y_train_transformed
 
 # ## 9. Define Models to be used and Cross-Validation techniques:
 
-# In[532]:
+# In[25]:
 
 
 # Define the models
@@ -576,7 +570,7 @@ cv = {
 
 # ## 10. Test Models and Cross-Validation techniques to get the optimal model:
 
-# In[534]:
+# In[26]:
 
 
 # Variables to store the best model with score
@@ -597,7 +591,7 @@ for model_name, model in models.items():
             best_model = model_name
 
 
-# In[535]:
+# In[27]:
 
 
 print(f"Best Model is - {best_model} with score {best_score}")
@@ -605,7 +599,7 @@ print(f"Best Model is - {best_model} with score {best_score}")
 
 # ## 11. Hyperparameter tunning of an optimal Model:
 
-# In[537]:
+# In[28]:
 
 
 # Define hyperparameter grid for Logistic Regression
@@ -617,7 +611,7 @@ param_grid = {
 }
 
 
-# In[538]:
+# In[29]:
 
 
 # Random Search CV
@@ -643,7 +637,7 @@ rscv.fit(X_train_transformed, y_train_transformed)
 
 # ## 12: Update the Pipeline with the Best Model with best Hyperparameters
 
-# In[628]:
+# In[30]:
 
 
 # Get the best parameters from randomized search
@@ -671,7 +665,7 @@ final_pipeline.fit(X_train, y_train.apply(lambda x: 0 if x == '9999-99-99' else 
 
 # ## 14. Export the Model to pkl file for deployment: 
 
-# In[630]:
+# In[31]:
 
 
 # Dumping the model as Covid-19 Death Predict Model using final_pipeline:
@@ -684,7 +678,7 @@ print("Pipeline saved successfully.")
 
 # ## 15. Import the Model to predict the target from test data:
 
-# In[633]:
+# In[32]:
 
 
 # Load the pipeline
@@ -698,7 +692,7 @@ print("Predictions completed.")
 
 # ## Evaluate the model on the test set:
 
-# In[636]:
+# In[33]:
 
 
 # Evaluate the model on the test set
@@ -709,39 +703,3 @@ print('\nclassification_report:\n', classification_report(y_test_transformed, y_
 
 
 # ## 15. Conclusion:
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[638]:
-
-
-pip freeze > requirements.txt
-
-
-# In[ ]:
-
-
-jupyter nbconvert --to script my_notebook.ipynb
-
-
-# In[646]:
-
-
-jupyter nbconvert --to script COVID-19 Project - Predict Death - Using Pipeline.ipynb
-
-
-# In[ ]:
-
-
-
-
