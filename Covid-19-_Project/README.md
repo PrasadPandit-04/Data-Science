@@ -143,9 +143,9 @@ This project is **open-source**, and contributions are welcome! Feel free to **f
 
 This project is open-source, and contributions are always welcome!
 
-- Found a bug? **Open an issue!**
-- Have an improvement in mind? **Submit a pull request!**
-- Want to discuss ML approaches or suggest enhancements? **Start a discussion!**
+Found a bug? **[Open an issue](https://github.com/PrasadPandit-04/Data-Science/issues/new)**  
+Have an improvement in mind? **[Submit a pull request](https://github.com/PrasadPandit-04/Data-Science/pulls)**  
+Want to discuss ML approaches or suggest enhancements? **[Start a discussion](https://github.com/PrasadPandit-04/Data-Science/discussions)**
 
 ## License
 
